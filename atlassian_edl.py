@@ -19,11 +19,6 @@ options:
   -6, --six   IPv6 addresses only
 """
 
-
-proxies = {'http': 'http://10.29.60.86:3128', 'https': 'http://10.29.60.86:3128'}
-
-
-
 def clear():
     os.system("cls" if os.name == "nt" else "clear")
 
@@ -37,7 +32,7 @@ def argue_with_me():
     return four, six
 
 def get_data_from_provider(url):
-    response = requests.get(url, verify=False, proxies=proxies).json()
+    response = requests.get(url, verify=False).json()
     data = response.get('items')
     return data
 
