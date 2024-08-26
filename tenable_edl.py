@@ -71,7 +71,6 @@ def make_request(url, config, verify=False):
         try:
             if http_proxy and https_proxy:
                 response = requests.get(url, proxies=proxies, verify=verify)
-                # breakpoint()
                 response.raise_for_status()
                 response = response.json()
                 data = response.get('prefixes')
