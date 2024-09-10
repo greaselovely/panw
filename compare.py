@@ -87,13 +87,14 @@ def dialog_get_models() -> tuple:
     print("[q or enter to exit]", end='\n\n')
     if m_type == 'vm':
         for v in (models_dict.keys()):
-                print(f"-  {v}")
+            if v == "cn": continue
+            print(f"-  {v}")
     if m_type == 'cn':
         return m_type, m_number
     while True:
         model = input("Enter model number: ")
         if model.lower() == "all":
-            m_number = models_dict['All']()[2:]
+            m_number = models_dict['All']()[2:-2]   # -2 to avoid grabbing the cn series and having it added to the vm series view.
             break
         if model.lower() == "q" or model == "":
             break
