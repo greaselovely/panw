@@ -4,23 +4,13 @@ from datetime import datetime
 import sys
 
 
-def get_akamai_cdn_asns():
-    """
-    Get a list of core Akamai CDN ASNs (not including Prolexic/DDoS or other services).
-    
-    Returns:
-        list: List of Akamai CDN ASN numbers
-    """
-    # Primary Akamai CDN ASNs
-    core_cdn_asns = [
-        16625,  # Akamai Technologies - North America
-        20940,  # Akamai International B.V. - Europe/Global
-        23454,  # Akamai Technologies - Additional North America capacity
-        35994,  # Akamai Technologies - Additional Global capacity
-        43639   # Akamai Technologies - Additional CDN capacity
-    ]
-    return core_cdn_asns
-
+core_cdn_asns = [
+    16625,  # Akamai Technologies - North America
+    20940,  # Akamai International B.V. - Europe/Global
+    23454,  # Akamai Technologies - Additional North America capacity
+    35994,  # Akamai Technologies - Additional Global capacity
+    43639   # Akamai Technologies - Additional CDN capacity
+]
 
 def get_ip_prefixes_for_asn(asn):
     """
@@ -74,15 +64,13 @@ def main():
     print("Akamai CDN IP Address Collector")
     print("-------------------------------")
     
-    # Get Akamai CDN ASNs
-    asns = get_akamai_cdn_asns()
-    print(f"Using these Akamai CDN ASNs: {', '.join(map(str, asns))}")
+    print(f"Using these Akamai CDN ASNs: {', '.join(map(str, core_cdn_asns))}")
     
     # Get all prefixes for each ASN
     all_prefixes = []
     asn_to_prefixes = {}  # Track which prefixes belong to which ASN
     
-    for asn in asns:
+    for asn in core_cdn_asns:
         print(f"Fetching prefixes for ASN {asn}...")
         prefixes = get_ip_prefixes_for_asn(asn)
         print(f"Found {len(prefixes)} prefixes for ASN {asn}")
@@ -119,7 +107,7 @@ def main():
     with open(ipv4_filename, "w") as f:
         f.write(f"# Akamai CDN IPv4 Prefixes\n")
         f.write(f"# Generated on: {date_str}\n")
-        f.write(f"# ASNs: {', '.join([str(asn) for asn in asns])}\n\n")
+        f.write(f"# ASNs: {', '.join([str(asn) for asn in core_cdn_asns])}\n\n")
         
         for prefix in ipv4_prefixes:
             f.write(f"{prefix}\n")
@@ -129,7 +117,7 @@ def main():
     with open(ipv6_filename, "w") as f:
         f.write(f"# Akamai CDN IPv6 Prefixes\n")
         f.write(f"# Generated on: {date_str}\n")
-        f.write(f"# ASNs: {', '.join([str(asn) for asn in asns])}\n\n")
+        f.write(f"# ASNs: {', '.join([str(asn) for asn in core_cdn_asns])}\n\n")
         
         for prefix in ipv6_prefixes:
             f.write(f"{prefix}\n")
