@@ -6,7 +6,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 url = "https://ip-ranges.atlassian.com/"
-file_name = "edl.txt"
+file_name = "atlassian_edl.txt"
 
 """
 usage: atlassian_edl.py [-h] [-4] [-6] [-a]

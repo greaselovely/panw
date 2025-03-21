@@ -11,7 +11,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 url = "https://docs.tenable.com/ip-ranges/data.json"
-file_name = "edl.txt"
+file_name = "tenable_edl.txt"
 
 
 """
