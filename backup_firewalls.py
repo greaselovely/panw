@@ -199,9 +199,9 @@ class PANWBackupManager:
             'category': 'device-state',
             'key': api_key
         }
-        
-        date_str = datetime.now().strftime("%Y%m%d")
-        filename = f"{hostname}_{date_str}.tgz"
+
+        timestamp_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{hostname}_{timestamp_str}.tgz"
         filepath = os.path.join(self.backup_dir, filename)
         
         print(f"Backing up device state from {firewall_ip} to {filename}...")
