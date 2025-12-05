@@ -13,7 +13,6 @@ import argparse
 import sys
 import os
 import tarfile
-import tempfile
 import time
 import getpass
 
@@ -27,7 +26,7 @@ class PANWBackupManager:
         self.config = self.load_config()
         self.session = requests.Session()
         self.session.verify = False
-        self.backup_dir = 'ngfw_config'
+        self.backup_dir = self._get_backup_dir()
         
     def load_config(self):
         """Load configuration from JSON file."""
@@ -50,7 +49,66 @@ class PANWBackupManager:
         except Exception as e:
             print(f"Error saving configuration: {e}")
             return False
-    
+
+    def _get_backup_dir(self):
+        """Get backup directory from config, prompting user if not set."""
+        if not self.config:
+            self.config = {"firewalls": {}}
+
+        # Check if backup_dir is already in config
+        if 'backup_dir' in self.config and self.config['backup_dir']:
+            backup_dir = self.config['backup_dir']
+            # Validate the stored path still exists or can be created
+            if os.path.isdir(backup_dir):
+                return backup_dir
+            # Path doesn't exist, ask to create it
+            print(f"Configured backup directory '{backup_dir}' does not exist.")
+            create = input("Create this directory? (Y/n): ").strip().lower()
+            if create != 'n':
+                try:
+                    os.makedirs(backup_dir)
+                    print(f"Created backup directory: {backup_dir}")
+                    return backup_dir
+                except OSError as e:
+                    print(f"Error creating directory: {e}")
+            # Fall through to prompt for new path
+
+        # Prompt user for backup directory path
+        print("\n=== Backup Directory Setup ===")
+        while True:
+            backup_dir = input("Enter backup directory path (default: ngfw_config): ").strip()
+            if not backup_dir:
+                backup_dir = 'ngfw_config'
+
+            # Validate the path
+            try:
+                # Check for invalid characters (basic validation)
+                # Try to normalize the path to catch obvious issues
+                backup_dir = os.path.normpath(backup_dir)
+
+                if os.path.isdir(backup_dir):
+                    print(f"Using existing directory: {backup_dir}")
+                    self.config['backup_dir'] = backup_dir
+                    self.save_config()
+                    return backup_dir
+
+                # Path doesn't exist, ask to create
+                create = input(f"Directory '{backup_dir}' does not exist. Create it? (Y/n): ").strip().lower()
+                if create != 'n':
+                    os.makedirs(backup_dir)
+                    print(f"Created backup directory: {backup_dir}")
+                    self.config['backup_dir'] = backup_dir
+                    self.save_config()
+                    return backup_dir
+                else:
+                    print("Please enter a different path.")
+                    continue
+
+            except OSError as e:
+                print(f"Error: Invalid path '{backup_dir}' - {e}")
+                print("Please enter a valid directory path.")
+                continue
+
     def ensure_backup_directory(self):
         """Create backup directory if it doesn't exist."""
         if not os.path.exists(self.backup_dir):
